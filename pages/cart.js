@@ -101,7 +101,7 @@ export default function CartPage(){
         removeProduct(id);
     }
     async function goToPayment(){
-        const response = await axios('/api/checkout', {
+        const response = await axios.post('/api/checkout', {
             name,email,city,postalCode,streetAddress,
             cartProducts,
         });

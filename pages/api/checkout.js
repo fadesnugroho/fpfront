@@ -39,13 +39,13 @@ export default async function handler(req,res){
         streetAddress,paid:false,
     });
 
-    const session = await stripe.checkout.session.create({
+    const session = await stripe.checkout.sessions.create({
         line_items,
         mode: 'payment',
         customer_email: email,
         success_url: process.env.PUBLIC_URL + '/cart?succes=1',
         cancel_url: process.env.PUBLIC_URL + '/cart?canceled=1',
-        metadata: {orderId:orderDoc._id.toString()},
+        metadata: {orderId:orderDoc._id.toString(),test:'ok'},
     });
 
     res.json({
