@@ -10,7 +10,10 @@ import Input from "@/components/Input";
 
 const ColumnsWrapper = styled.div`
     display: grid;
-    grid-template-columns: 1.2fr .8fr;
+    grid-template-columns: 1fr;
+    @media screen and (min-width: 768px){
+        grid-template-columns: 1.2fr .8fr;
+    }
     gap: 40px;
     margin-top: 40px;
 `;
@@ -26,22 +29,36 @@ const ProductInfoCell = styled.td`
 `;
 
 const ProductImageBox = styled.div`
-    width: 100px;
+    width: 70px;
     height: 100px;
-    padding: 10px;
+    padding: 2px;
     border: 1px solid rgba(0,0,0, 0.1);
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 10px;
     img{
-        max-width: 80%;
-        max-height: 80%;
+        max-width: 60%;
+        max-height: 60%;
+    }
+    @media screen and (min-width: 768px){
+        padding: 10px;
+        width: 100px;
+        height: 100px;
+        img{
+            max-width: 80%;
+            max-height: 80%;
+        }
     }
 `;
 
 const QuantityLabel = styled.span`
-    padding: 0 3px;
+    padding: 0 15px;
+    display: block;
+    @media screen and (min-width: 768px){
+        display: inline-block;
+        padding: 0 10px;
+    }
 `;
 
 const CityHolder = styled.div`
@@ -50,13 +67,14 @@ const CityHolder = styled.div`
 `;
 
 export default function CartPage(){
-    const {cartProducts,addProduct,removeProduct} = useContext(CartContext);
+    const {cartProducts,addProduct,removeProduct,clearCart} = useContext(CartContext);
     const [products,setProducts] = useState([]);
     const [name,setName] = useState('');
     const [email,setEmail] = useState('');
     const [city,setCity] = useState('');
     const [postalCode,setPostalCode] = useState('');
     const [streetAddress,setStreetAddress] = useState('');
+    const [isSuccess,setIsSuccess] = useState(false);
     useEffect(() => {
         if (cartProducts.length > 0) {
             axios.post('/api/cart', {ids:cartProducts})
@@ -67,6 +85,15 @@ export default function CartPage(){
             setProducts([]);
         }
     }, [cartProducts]);
+    useEffect(() => {
+        if (typeof window === 'undefined'){
+            return;
+        }
+        if (window?.location.href.includes('success')){
+            setIsSuccess(true);
+            clearCart();
+        }
+    }, []);
     function moreOfThisProduct(id){
         addProduct(id);
     }
@@ -88,7 +115,7 @@ export default function CartPage(){
         total += price;
     }
 
-    if (window.location.href.includes('success')){
+    if (isSuccess){
         return(
             <>
                 <Header/>
@@ -193,5 +220,5 @@ export default function CartPage(){
             </ColumnsWrapper>
         </Center>
         </>
-    )
+    );
 }
